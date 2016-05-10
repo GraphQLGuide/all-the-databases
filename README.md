@@ -14,11 +14,11 @@ And in another terminal:
 mongod
 ```
 
-Then open http://localhost:8080
+Then open [http://localhost:8080](http://localhost:8080)
 
 When you paste this on the left:
 
-```json
+```
 {
   author(firstName:"Edmond", lastName: "Jones"){
     firstName
