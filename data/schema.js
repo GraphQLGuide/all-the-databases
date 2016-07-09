@@ -9,8 +9,8 @@ type User {
 
 type Tweet {
   text: String
-  author: User
   created: Float
+  author: User
   views: Int
 }
 

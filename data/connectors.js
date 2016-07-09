@@ -6,6 +6,7 @@ import bluebird from 'bluebird';
 import _ from 'lodash';
 import casual from 'casual';
 
+
 // SQL
 
 const db = new Sequelize('twitter', null, null, {
@@ -27,6 +28,7 @@ const TweetModel = db.define('tweet', {
 UserModel.hasMany(TweetModel);
 TweetModel.belongsTo(UserModel);
 
+
 // MongoDB
 
 const mongo = Mongoose.connect('mongodb://localhost/views');
@@ -38,10 +40,12 @@ const ViewsSchema = Mongoose.Schema({
 
 const Views = Mongoose.model('views', ViewsSchema);
 
+
 // Redis
 
 bluebird.promisifyAll(Redis.RedisClient.prototype);
 bluebird.promisifyAll(Redis.Multi.prototype);
+
 
 // REST
 
@@ -54,6 +58,7 @@ const FortuneCookie = {
       });
   }
 };
+
 
 // Seed SQL & Mongo
 
@@ -78,6 +83,7 @@ db.sync({ force: true }).then(() => {
     });
   });
 });
+
 
 // Seed Redis
 
@@ -112,7 +118,7 @@ client.lrange('public_feed', 0, -1, (err, replies) => {
 });
 
 
-
+// Export
 
 const User = db.models.user;
 const Tweet = db.models.tweet;

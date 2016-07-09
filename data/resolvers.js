@@ -33,8 +33,8 @@ const resolvers = {
       }
     },
     views(tweet) {
-      return Views.
-        findOne({ tweetId: tweet.id })
+      return Views
+        .findOne({ tweetId: tweet.id })
         .then((doc) => doc.views);
     }
   }
