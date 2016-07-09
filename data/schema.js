@@ -1,27 +1,30 @@
-const typeDefinitions = `
-type Author {
-  id: Int
+const schema = [`
+type User {
   firstName: String
   lastName: String
-  posts: [Post]
+  photo: String
+  tweets: [Tweet]
+  mentions: [Tweet]
+  fortune: String
 }
 
-type Post {
-  id: Int
-  title: String
+type Tweet {
   text: String
+  author: User
+  created: Float
   views: Int
-  author: Author
 }
 
 type Query {
-  author(firstName: String, lastName: String): Author
-  getFortuneCookie: String
+  user(id: Int): User
+  follower_feed(userId: Int): [Tweet]
+  public_feed: [Tweet]
+  city_feed: [Tweet]
 }
 
 schema {
   query: Query
 }
-`;
+`];
 
-export default [typeDefinitions];
+export default schema;

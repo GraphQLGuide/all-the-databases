@@ -14,6 +14,9 @@ And in another terminal:
 mongod
 ```
 
+`brew install redis`
+`redis-server /usr/local/etc/redis.conf`
+
 Then open [http://localhost:8080](http://localhost:8080)
 
 When you paste this on the left:
@@ -51,3 +54,4 @@ and hit the play button (cmd-return), then you should get something like this on
   }
 }
 ```  
+
