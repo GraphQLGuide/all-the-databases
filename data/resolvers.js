@@ -1,6 +1,6 @@
-import { User, Views, FortuneCookie, redis } from './connectors';
+import { User, Views, FortuneCookie, Redis } from './connectors';
 
-const l = (...args) => console.log(...args);
+const client = Redis.createClient();
 
 const resolvers = {
   Query: {
@@ -9,29 +9,13 @@ const resolvers = {
         where: { id: args.id }
       });
     },
-    follower_feed() {
-      return [];
-    },
     public_feed() {
-      // was getting an error when trying to use the same client created in connectors.js:
-      // AbortError: LRANGE can't be processed. The connection is already closed.
-      const client = redis.createClient();
-
       return client
         .lrangeAsync('public_feed', 0, -1)
-        .then((values) => {
-          l('WHAT', values.map(JSON.parse));
-          return values.map(JSON.parse);
-        });
-    },
-    city_feed() {
-      return [];
+        .then((values) => values.map(JSON.parse));
     }
   },
   User: {
-    mentions(user) {
-      return user.mentions;
-    },
     tweets(user) {
       return user.getTweets();
     },

@@ -1,16 +1,16 @@
 import Sequelize from 'sequelize';
 import Mongoose from 'mongoose';
 import rp from 'request-promise';
-import redis from 'redis';
+import Redis from 'redis';
 import bluebird from 'bluebird';
 import _ from 'lodash';
 import casual from 'casual';
 
 // SQL
 
-const db = new Sequelize('blog', null, null, {
+const db = new Sequelize('twitter', null, null, {
   dialect: 'sqlite',
-  storage: './blog.sqlite'
+  storage: './twitter.sqlite'
 });
 
 const UserModel = db.define('user', {
@@ -40,8 +40,8 @@ const Views = Mongoose.model('views', ViewsSchema);
 
 // Redis
 
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
+bluebird.promisifyAll(Redis.RedisClient.prototype);
+bluebird.promisifyAll(Redis.Multi.prototype);
 
 // REST
 
@@ -72,9 +72,7 @@ db.sync({ force: true }).then(() => {
       }).then((tweet) => {
         return Views.update(
           { tweetId: tweet.id },
-          {
-            views: casual.integer(0, 100)
-          },
+          { views: casual.integer(0, 100) },
           { upsert: true });
       });
     });
@@ -83,7 +81,7 @@ db.sync({ force: true }).then(() => {
 
 // Seed Redis
 
-const client = redis.createClient();
+const client = Redis.createClient();
 
 client.on("error", function (err) {
   // console.log("Error " + err);
@@ -109,7 +107,7 @@ client.ltrim('public_feed', 0, 9);
 
 client.lrange('public_feed', 0, -1, (err, replies) => {
   replies.forEach((reply, i) => {
-    console.log('Added to redis #' + i, JSON.parse(reply));
+    console.log('Added to Redis #' + i, JSON.parse(reply));
   });
 });
 
@@ -119,6 +117,6 @@ client.lrange('public_feed', 0, -1, (err, replies) => {
 const User = db.models.user;
 const Tweet = db.models.tweet;
 
-export { User, Tweet, Views, FortuneCookie, redis };
+export { User, Tweet, Views, FortuneCookie, Redis };
 
 
