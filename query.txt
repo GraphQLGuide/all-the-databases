@@ -1,0 +1,21 @@
+{
+  user(id: 2) {
+    firstName
+    lastName
+    photo
+    tweets {
+      text
+      created
+    }
+    fortune
+  }
+  public_feed {
+    text
+    created
+    author {
+      firstName
+      lastName
+      photo
+    }
+  }
+}

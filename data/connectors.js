@@ -52,10 +52,8 @@ bluebird.promisifyAll(Redis.Multi.prototype);
 const FortuneCookie = {
   getOne() {
     return rp('http://fortunecookieapi.com/v1/cookie')
-      .then((res) => JSON.parse(res))
-      .then((res) => {
-        return res[0].fortune.message;
-      });
+      .then(JSON.parse)
+      .then((res) => res[0].fortune.message);
   }
 };
 

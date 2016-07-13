@@ -9,10 +9,9 @@ const resolvers = {
         where: { id: args.id }
       });
     },
-    public_feed() {
-      return client
-        .lrangeAsync('public_feed', 0, -1)
-        .then((values) => values.map(JSON.parse));
+    async public_feed() {
+      const feed = await client.lrangeAsync('public_feed', 0, -1);
+      return feed.map(JSON.parse);
     }
   },
   User: {
