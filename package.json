@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/apollostack/apollo-starter-kit#readme",
   "dependencies": {
+    "elasticsearch": "^11.0.1",
     "express": "4.13.4",
     "graphql-tools": "^0.3.6",
     "lodash": "^4.11.1",

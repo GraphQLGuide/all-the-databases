@@ -3,20 +3,21 @@ type User {
   firstName: String
   lastName: String
   photo: String
-  tweets: [Tweet]
-  fortune: String
+  mentions: [Tweet]
 }
 
 type Tweet {
   text: String
-  created: Float
   author: User
+  city: String
   views: Int
+  created: Float
 }
 
 type Query {
   user(id: Int): User
-  public_feed: [Tweet]
+  publicFeed: [Tweet]
+  cityFeed: [Tweet]
 }
 
 schema {

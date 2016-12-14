@@ -1,4 +1,5 @@
-import { User, Views, FortuneCookie, Redis } from './connectors';
+import rp from 'request-promise';
+import { User, Tweet, Views, Elasticsearch, Redis } from './connectors';
 
 const client = Redis.createClient();
 
@@ -6,37 +7,57 @@ const resolvers = {
   Query: {
     user(_, args) {
       return User.find({
-        where: { id: args.id }
+        where: { id: args.id },
       });
     },
-    async public_feed() {
+    async publicFeed() {
       const feed = await client.lrangeAsync('public_feed', 0, -1);
       return feed.map(JSON.parse);
-    }
+    },
+    async cityFeed(_, args, context) {
+      const response = await rp(`http://ipinfo.io/${context.ip}`);
+      const location = JSON.parse(response);
+      // {
+      //   "ip": "8.8.8.8",
+      //   "hostname": "google-public-dns-a.google.com",
+      //   "city": "Mountain View",
+      //   "region": "California",
+      //   "country": "US",
+      //   "loc": "37.3860,-122.0838",
+      //   "org": "AS15169 Google Inc.",
+      //   "postal": "94040"
+      // }
+
+      const cityTweets = await Tweet.findAll({
+        where: { city: location.city },
+        limit: 3,
+      });
+
+      return cityTweets;
+    },
   },
   User: {
-    tweets(user) {
-      return user.getTweets();
+    async mentions(user) {
+      const results = await Elasticsearch.search({ q: `${user.firstName} ${user.lastName}` });
+      return results.hits.hits.map(hit => Tweet.build(hit._source));
     },
-    fortune(user) {
-      return FortuneCookie.getOne();
-    }
   },
   Tweet: {
     author(tweet) {
+      console.log('INSTANCE', tweet instanceof Tweet.Instance);
       // in Redis, author is a subdoc
-      if (tweet.author.firstName) {
-        return tweet.author;
-      } else {
-        return tweet.getAuthor();
+      if (tweet.user) {
+        return tweet.user;
       }
+
+      return tweet.getUser();
     },
     views(tweet) {
       return Views
         .findOne({ tweetId: tweet.id })
         .then((doc) => doc.views);
-    }
-  }
+    },
+  },
 };
 
 export default resolvers;

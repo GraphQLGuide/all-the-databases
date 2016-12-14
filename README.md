@@ -8,14 +8,21 @@ npm install
 npm run start
 ```
 
-And in another terminal:
+`brew install redis|elasticsearch`
+
+And in other terminals:
 
 ```
 mongod
 ```
 
-`brew install redis`
-`redis-server /usr/local/etc/redis.conf`
+```
+redis-server /usr/local/etc/redis.conf
+```
+
+```
+elasticsearch
+```
 
 Then open [http://localhost:8080](http://localhost:8080)
 
@@ -23,10 +30,10 @@ When you paste this on the left:
 
 ```
 {
-  author(firstName:"Edmond", lastName: "Jones"){
+  author(firstName:"Edmond", lastName: "Jones") {
     firstName
     lastName
-    posts{
+    posts {
       title
       views
     }
@@ -54,4 +61,3 @@ and hit the play button (cmd-return), then you should get something like this on
   }
 }
 ```  
-
