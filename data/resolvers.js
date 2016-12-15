@@ -1,7 +1,7 @@
 import rp from 'request-promise';
 import { User, Tweet, Views, Elasticsearch, Redis } from './connectors';
 
-const client = Redis.createClient();
+const redis = Redis.createClient();
 
 const resolvers = {
   Query: {
@@ -11,12 +11,12 @@ const resolvers = {
       });
     },
     async publicFeed() {
-      const feed = await client.lrangeAsync('public_feed', 0, -1);
+      const feed = await redis.lrangeAsync('public_feed', 0, -1);
       return feed.map(JSON.parse);
     },
     async cityFeed(_, args, context) {
       const response = await rp(`http://ipinfo.io/${context.ip}`);
-      const location = JSON.parse(response);
+      const { city } = JSON.parse(response);
       // {
       //   "ip": "8.8.8.8",
       //   "hostname": "google-public-dns-a.google.com",
@@ -29,8 +29,9 @@ const resolvers = {
       // }
 
       const cityTweets = await Tweet.findAll({
-        where: { city: location.city },
+        where: { city },
         limit: 3,
+        order: [['created', 'DESC']],
       });
 
       return cityTweets;
@@ -55,7 +56,7 @@ const resolvers = {
     views(tweet) {
       return Views
         .findOne({ tweetId: tweet.id })
-        .then((doc) => doc.views);
+        .then(doc => doc.views);
     },
   },
 };

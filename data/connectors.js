@@ -112,7 +112,7 @@ client.on('error', (err) => {
   console.log(`Error ${err}`);
 });
 
-_.times(10, (i) => {
+_.times(3, (i) => {
   const tweet = {
     id: i + 1,
     text: casual.sentences(1),
@@ -121,13 +121,14 @@ _.times(10, (i) => {
       lastName: casual.last_name,
       photo: 'http://placekitten.com/200/139',
     },
+    city: 'New York',
     created: Date.now() - i * 1000,
   };
 
   client.lpush('public_feed', JSON.stringify(tweet));
 });
 
-client.ltrim('public_feed', 0, 9);
+client.ltrim('public_feed', 0, 2);
 
 client.lrange('public_feed', 0, -1, (err, replies) => {
   replies.forEach((reply, i) => {
