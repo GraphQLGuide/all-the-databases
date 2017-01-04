@@ -45,8 +45,6 @@ const resolvers = {
   },
   Tweet: {
     author(tweet) {
-      throw new Error();
-      console.log('INSTANCE', tweet instanceof Tweet.Instance);
       // in Redis, author is a subdoc
       if (tweet.user) {
         return tweet.user;
