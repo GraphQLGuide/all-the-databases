@@ -1,4 +1,4 @@
-const schema = [`
+const schema = `
 type User {
   firstName: String
   lastName: String
@@ -23,6 +23,6 @@ type Query {
 schema {
   query: Query
 }
-`];
+`;
 
 export default schema;

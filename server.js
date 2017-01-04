@@ -1,11 +1,19 @@
 import express from 'express';
-import { apolloServer } from 'graphql-tools';
+import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
+import { makeExecutableSchema } from 'graphql-tools';
+import bodyParser from 'body-parser';
+
 import schema from './data/schema';
 import resolvers from './data/resolvers';
 
 const graphQLServer = express();
 
-graphQLServer.use('/', apolloServer((req) => {
+const executableSchema = makeExecutableSchema({
+  typeDefs: [schema],
+  resolvers,
+});
+
+graphQLServer.use('/graphql', bodyParser.json(), graphqlExpress((req) => {
   let ip = req.ip;
   const inDevelopment = ip === '::1';
 
@@ -14,13 +22,13 @@ graphQLServer.use('/', apolloServer((req) => {
   }
 
   return {
-    pretty: true,
-    graphiql: true,
-    printErrors: true,
-    schema,
-    resolvers,
+    schema: executableSchema,
     context: { ip },
   };
+}));
+
+graphQLServer.use('/graphiql', graphiqlExpress({
+  endpointURL: '/graphql',
 }));
 
 const GRAPHQL_PORT = 8080;

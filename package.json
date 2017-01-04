@@ -1,7 +1,7 @@
 {
-  "name": "apollo-starter-kit",
+  "name": "all-the-databases",
   "version": "0.1.0",
-  "description": "Minimal set of code to write a GraphQL server with Apollo graphql-tools",
+  "description": "A GraphQL server tutorial combining 5 data sources",
   "scripts": {
     "start": "nodemon ./server.js --exec babel-node",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apollostack/apollo-starter-kit.git"
+    "url": "git+https://github.com/GraphQLGuide/all-the-databases.git"
   },
   "keywords": [
     "Node.js",
@@ -22,13 +22,16 @@
   "author": "Jonas Helfer <jonas@helfer.email>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/apollostack/apollo-starter-kit/issues"
+    "url": "https://github.com/GraphQLGuide/all-the-databases/issues"
   },
-  "homepage": "https://github.com/apollostack/apollo-starter-kit#readme",
+  "homepage": "https://github.com/GraphQLGuide/all-the-databases#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "elasticsearch": "^11.0.1",
     "express": "4.13.4",
-    "graphql-tools": "^0.3.6",
+    "graphql": "^0.8.2",
+    "graphql-server-express": "^0.4.3",
+    "graphql-tools": "^0.8.4",
     "lodash": "^4.11.1",
     "mongoose": "^4.4.12",
     "redis": "^2.6.2",
