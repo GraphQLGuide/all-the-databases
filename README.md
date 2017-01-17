@@ -52,7 +52,9 @@ Then in the `all-the-databases/` directory, run the GraphQL server:
 npm start
 ```
 
-Then open [http://localhost:8080/graphiql](http://localhost:8080/graphiql)
+Then open:
+
+[localhost:8080/graphiql](http://localhost:8080/graphiql)
 
 Then query:
 

@@ -15,8 +15,12 @@ type Tweet {
 }
 
 type Query {
-  user(id: Int): User
+  user(id: Int!): User
+
+  # A feed of the most recent tweets worldwide
   publicFeed: [Tweet]
+
+  # A feed of the most recent tweets in your city
   cityFeed: [Tweet]
 }
 
