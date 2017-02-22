@@ -1,7 +1,5 @@
 import rp from 'request-promise';
-import { User, Tweet, Views, Elasticsearch, Redis } from './connectors';
-
-const redis = Redis.createClient();
+import { User, Tweet, Views, Elasticsearch, redis } from './connectors';
 
 const resolvers = {
   Query: {
@@ -40,7 +38,7 @@ const resolvers = {
   User: {
     async mentions(user) {
       const results = await Elasticsearch.search({ q: `${user.firstName} ${user.lastName}` });
-      return results.hits.hits.map(hit => Tweet.build(hit._source));
+      return results.hits.hits.map(hit => Tweet.build({ ...hit._source, id: hit._id }));
     },
   },
   Tweet: {

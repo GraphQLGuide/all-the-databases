@@ -12,7 +12,11 @@ There's also database, ORM, and seeding code in [data/connectors.js](https://git
 
 ## Browse data
 
-TODO link to hosted graphiql, then [try out a query](#query)
+Here's the deployed version of this server:
+
+[all-the-databases.graphql.guide/graphiql](https://all-the-databases.graphql.guide/graphiql)
+
+Now [try out a query](#query)
 
 ## Run locally
 
@@ -49,7 +53,7 @@ elasticsearch
 Then in the `all-the-databases/` directory, run the GraphQL server:
 
 ```
-npm start
+npm run dev
 ```
 
 Then open:

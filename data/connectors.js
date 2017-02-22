@@ -6,13 +6,18 @@ import bluebird from 'bluebird';
 import _ from 'lodash';
 import casual from 'casual';
 
+const inProduction = process.env.NODE_ENV === 'production';
 
 // SQL
 
-const sql = new Sequelize('twitter', null, null, {
-  dialect: 'sqlite',
-  storage: './twitter.sqlite',
-});
+const sql = inProduction ? (
+  new Sequelize(process.env.POSTGRES_URI, {})
+) : (
+  new Sequelize('twitter', null, null, {
+    dialect: 'sqlite',
+    storage: './twitter.sqlite',
+  })
+);
 
 const UserModel = sql.define('user', {
   firstName: { type: Sequelize.STRING },
@@ -22,7 +27,7 @@ const UserModel = sql.define('user', {
 
 const TweetModel = sql.define('tweet', {
   text: { type: Sequelize.STRING },
-  created: { type: Sequelize.INTEGER },
+  created: { type: Sequelize.BIGINT },
   city: { type: Sequelize.STRING },
 });
 
@@ -32,7 +37,8 @@ TweetModel.belongsTo(UserModel);
 
 // MongoDB
 
-Mongoose.connect('mongodb://localhost/views');
+console.log(inProduction ? process.env.MONGO_URI : 'mongodb://localhost/views');
+Mongoose.connect(inProduction ? process.env.MONGO_URI : 'mongodb://localhost/views');
 
 const ViewsSchema = Mongoose.Schema({ // eslint-disable-line
   tweetId: Number,
@@ -45,7 +51,7 @@ const Views = Mongoose.model('views', ViewsSchema);
 // Elasticsearch
 
 const Elasticsearch = new elasticsearch.Client({
-  host: 'localhost:9200',
+  host: inProduction ? process.env.ES_URI : 'localhost:9200',
   log: 'trace',
 });
 
@@ -58,13 +64,15 @@ bluebird.promisifyAll(Redis.Multi.prototype);
 
 // Seed SQL, Elasticsearch, & Mongo
 
+Views.remove({});
+
 const seed = () => {
   casual.seed(123);
 
   sql.sync({ force: true }).then(() => {
     _.times(10, (i) => {
       const id = i + 1;
-      return UserModel.create({
+      UserModel.create({
         id,
         firstName: casual.first_name,
         lastName: casual.last_name,
@@ -84,17 +92,17 @@ const seed = () => {
         Elasticsearch.create({
           index: 'twitter',
           type: 'tweet',
-          id: id + 10,
+          id,
           body: esTweet,
         }, (e, r) => {
           console.log('Inserted into Elasticsearch tweet with id', r._id);
         });
 
-        return user.createTweet(tweetData).then((tweet) => {
-          return Views.update(
-            { tweetId: tweet.id },
-            { views: casual.integer(0, 100) },
-            { upsert: true });
+        user.createTweet(tweetData).then((tweet) => {
+          Views.create({
+            tweetId: tweet.id,
+            views: casual.integer(0, 100),
+          });
         });
       });
     });
@@ -106,9 +114,9 @@ Elasticsearch.indices.delete({ index: 'twitter' }).then(seed, seed);
 
 // Seed Redis
 
-const client = Redis.createClient();
+const redis = Redis.createClient(inProduction && { url: process.env.REDIS_URI });
 
-client.on('error', (err) => {
+redis.on('error', (err) => {
   console.log(`Error ${err}`);
 });
 
@@ -125,12 +133,12 @@ _.times(3, (i) => {
     created: Date.now() - i * 1000,
   };
 
-  client.lpush('public_feed', JSON.stringify(tweet));
+  redis.lpush('public_feed', JSON.stringify(tweet));
 });
 
-client.ltrim('public_feed', 0, 2);
+redis.ltrim('public_feed', 0, 2);
 
-client.lrange('public_feed', 0, -1, (err, replies) => {
+redis.lrange('public_feed', 0, -1, (err, replies) => {
   replies.forEach((reply, i) => {
     console.log(`Added to Redis tweet #${i}`, JSON.parse(reply));
   });
@@ -142,4 +150,4 @@ client.lrange('public_feed', 0, -1, (err, replies) => {
 const User = sql.models.user;
 const Tweet = sql.models.tweet;
 
-export { User, Tweet, Views, Elasticsearch, Redis };
+export { User, Tweet, Views, Elasticsearch, redis };
