@@ -1,6 +1,10 @@
 # All the Databases
 
-A GraphQL server tutorial combining 5 data sources
+A GraphQL server tutorial combining 5 data sources:
+
+https://www.compose.com/articles/use-all-the-databases-part-1/
+
+To follow along, check out the [`empty-resolvers` branch](https://github.com/GraphQLGuide/all-the-databases/tree/empty-resolvers).
 
 Code written in the tutorial can be found in:
 
