@@ -114,7 +114,7 @@ Elasticsearch.indices.delete({ index: 'twitter' }).then(seed, seed);
 
 // Seed Redis
 
-const redis = Redis.createClient(inProduction && { url: process.env.REDIS_URI });
+const redis = Redis.createClient(inProduction ? { url: process.env.REDIS_URI } : null);
 
 redis.on('error', (err) => {
   console.log(`Error ${err}`);
